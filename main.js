@@ -1,48 +1,51 @@
-let currencyFrom = prompt("Exchange from currency");
-let currencyTo = prompt("Exchange to currency");
-let amount = prompt("How much do you want to exchange?");
+// USD <-> 0
+// VND <-> 1
+// EUR <-> 2
+// KRW <-> 3
+const currencyList = ['USD', 'VND', 'EUR', 'KRW']
+const rateCurrency = [
+    [1, 23200, 0.88, 1192.84],
+    [1 / 23200, 1, 1 / 26240.64, 1 / 19.45],
+    [1 / 0.88, 26240.64, 1, 1349.01],
+    [1 / 1192.84, 19.45, 1 / 1349.01, 1192.84],
+];
 
-const rateUsdVnd = 23000;
 
-function changeMoney(currencyFrom, currencyTo, amount) {
+function main() {
     // Control the input
-    if (currencyFrom != "VND" && currencyFrom != "USD") {
-        // console.log('Can not exchange this currency')
-        return 'Can not exchange this currency'
+    let currencyFrom = prompt("Exchange from currency: USD, VND, EUR, KRW");
+    let indexCurrencyFrom = currencyList.indexOf(currencyFrom);
+    if (indexCurrencyFrom < 0) {
+        alert('Can not exchange this currency')
+        return 0
     }
-
-    if (currencyTo != "VND" && currencyTo != "USD") {
-        // console.log('Can not exchange this currency')
-        return 'Can not exchange this currency'
+    let currencyTo = prompt("Exchange to currency: USD, VND, EUR, KRW]");
+    let indexCurrencyTo = currencyList.indexOf(currencyTo);
+    if (indexCurrencyTo < 0) {
+        alert('Can not exchange this currency')
+        return 0
     }
+    let amount = prompt("How much do you want to exchange?");
     if (Number.isNaN(parseInt(amount))) {
-        // console.log('Amount is not a number')
-        return 'Amount is not a number'
+        alert('Amount is not a number')
+        return 0
     }
+    let result = changeMoney(indexCurrencyFrom, indexCurrencyTo, amount)
+    alert(formatCurrency(currencyFrom, amount) + '=' + formatCurrency(currencyTo, result));
+}
 
+function changeMoney(indexCurrencyFrom, indexCurrencyTo, amount) {
     let result = 0;
-    if (currencyFrom === "USD" && currencyTo === "VND") {
-        result = amount * rateUsdVnd;
-    }
-    if (currencyFrom === "VND" && currencyTo === "USD") {
-        result = parseFloat((amount / rateUsdVnd).toFixed(2));
-    }
+    result = parseFloat((amount * rateCurrency[indexCurrencyFrom][indexCurrencyTo]).toFixed(2));
     return result
 }
 
 function formatCurrency(type, value) {
     const formatter = new Intl.NumberFormat(type, {
         currency: type,
-        style: "currency"
+        style: "currency",
+        minimumFractionDigits: 2,
     });
     return formatter.format(value);
 }
-
-let result = changeMoney(currencyFrom, currencyTo, amount)
-if (Number.isNaN(parseInt(result))) {
-    console.log(result);
-
-} else {
-    console.log(formatCurrency(currencyFrom, amount), '=', formatCurrency(currencyTo, result));
-}
-
+main();
